@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Entities.Concrete
 {
-    public class Category : IEntity
+    public class Category : IEntity,ISoftDelete
     {
         public int Id { get; set; }
         public string CategoryName { get; set; }
@@ -13,5 +13,6 @@ namespace Entities.Concrete
 
         //Relations
         public List<ArticleCategory> ArticleCategories { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

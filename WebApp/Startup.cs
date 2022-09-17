@@ -39,6 +39,11 @@ namespace WebApp
 
             services.AddScoped<IValidator<Tag>, TagValidator>();
             services.AddScoped<IValidator<Subscribe>, SubscribeValidator>();
+            services.AddScoped<IValidator<SocialMedia>, SocialMediaValidator>();
+            services.AddScoped<IValidator<Category>, CategoryValidator>();
+            services.AddScoped<IValidator<Article>, ArticleValidator>();
+            services.AddScoped<IValidator<Comment>, CommentValidator>();
+
 
             services.AddAutoMapper(typeof(TagProfile));
         }

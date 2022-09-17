@@ -4,11 +4,11 @@ using Entities.Dto.TagDtos;
 
 namespace Entities.Mapping
 {
-    public class TagProfile:Profile
+    public class UserProfile : Profile
     {
-        public TagProfile()
+        public UserProfile()
         {
-            CreateMap<TagAddOrUpdateRequestDto, Tag>();
+            CreateMap<TagAddOrUpdateRequestDto, User>();
         }
     }
 }

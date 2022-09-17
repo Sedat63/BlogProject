@@ -27,7 +27,7 @@ namespace Entities.Concrete
         public DbSet<Tag> Tags { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Subscribe> Subscribers { get; set; }
-        public DbSet<SocialMedia> SocialMedias { get; set; }
+        public DbSet<SocialMedia> SocialMedia { get; set; }
 
     }
 }

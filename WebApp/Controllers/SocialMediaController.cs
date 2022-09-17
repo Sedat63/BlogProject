@@ -1,5 +1,8 @@
-﻿using Entities.Concrete;
+﻿using AutoMapper;
+using Entities.Concrete;
 using Entities.Dto.SocialMediaDtos;
+using Entities.ObjectDesign;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,76 +16,106 @@ namespace WebApp.Controllers
     [ApiController]
     public class SocialMediaController : ControllerBase
     {
+
+        private readonly IValidator<SocialMedia> _validator;
+        private readonly IMapper _mapper;
+        BlogContext db = new BlogContext();
+
+        public SocialMediaController(
+            IValidator<SocialMedia> validator,
+            IMapper mapper)
+        {
+            _validator = validator;
+            _mapper = mapper;
+        }
+
+
         [HttpGet("getList")]
-        public List<SocialMediaListResponseDto> GetList()
+        public ServiceResponse<IList<SocialMediaListResponseDto>> GetList()
         {
             BlogContext db = new BlogContext();
-            var result = db.SocialMedias.Select(x => new SocialMediaListResponseDto
+
+            var result = db.SocialMedia
+                .Where(x => !x.IsDeleted)
+                .Select(x => new SocialMediaListResponseDto
             {
                 Id = x.Id,
                 Link = x.Link,
                 Icon = x.Icon,
-                Title = x.Title
-               
+                Title = x.Title,
+                ClassName = x.ClassName
             }).ToList();
 
-            return result;
+            return new ServiceResponse<IList<SocialMediaListResponseDto>>(result);
         }
 
-        [HttpPost("addSocial")]
-        public IActionResult AddSocial(SocialMediaAddOrUpdateRequestDto request)
+        [HttpPost("addSocialMedia")]
+        public ServiceResponse AddSocial(SocialMediaAddOrUpdateRequestDto request)
         {
-            BlogContext db = new BlogContext();
 
-            var social = new SocialMedia()
+            var socialMedia = _mapper.Map<SocialMedia>(request);
+
+            var validationResult = _validator.Validate(socialMedia);
+
+            if (!validationResult.IsValid)
             {
-                Id = request.Id,
-                Link = request.Link,
-                Icon = request.Icon,
-                Title = request.Title
-               
-            };
-            db.SocialMedias.Add(social);
+                return new ServiceResponse(string.Join(",", validationResult.Errors), false);
+            }
+
+            socialMedia.Link = socialMedia.Link.Trim();
+            socialMedia.Title = socialMedia.Title.Trim();
+            socialMedia.Icon = socialMedia.Icon.Trim();
+
+            db.SocialMedia.Add(socialMedia);
             db.SaveChanges();
-            return Ok("Sosyal Medya Eklendi");
+            // Service
+           
+            //DB
+            db.SaveChanges();
+
+            return new ServiceResponse("SocialMedia Eklendi");
         }
 
-        [HttpPost("updateSocial")]
-        public IActionResult UpdateSocial(SocialMediaAddOrUpdateRequestDto request)
+        [HttpPost("updateSocialMedia")]
+        public ServiceResponse UpdateSocial(SocialMediaAddOrUpdateRequestDto request)
         {
-            BlogContext db = new BlogContext();
+            var socialMedia = _mapper.Map<SocialMedia>(request);
 
-            var result = db.SocialMedias.FirstOrDefault(x => x.Id == request.Id);
-            if (result != null)
+            var validationResult = _validator.Validate(socialMedia);
+
+            if (!validationResult.IsValid)
             {
-                result.Link = request.Link;
-                result.Icon = request.Icon;
-                result.Title = request.Title;
-               
-                db.SaveChanges();
-                return Ok(result);
+                return new ServiceResponse(string.Join(",", validationResult.Errors), false);
             }
-            else
+
+            var result = db.SocialMedia.FirstOrDefault(x => x.Id == request.Id);
+
+            if (result == null)
             {
-                return BadRequest();
+                return new ServiceResponse("Bad Request --> Böyle bir kayıt bulunmuyor", false);
             }
+
+            result.Link = socialMedia.Link.Trim();
+            result.Title = socialMedia.Title.Trim();
+            result.Icon = socialMedia.Icon.Trim();
+            result.ClassName = socialMedia.ClassName.Trim();
+
+            db.SaveChanges();
+            return new ServiceResponse("Kayıt Güncellendi");
         }
 
-        [HttpDelete("deleteSocial")]
-        public IActionResult Delete(int id)
+        [HttpDelete("deleteSocialMedia/{id}")]
+        public ServiceResponse Delete(int id)
         {
-            BlogContext db = new BlogContext();
+            var result = db.SocialMedia.FirstOrDefault(x => x.Id == id);
 
-            var result = db.SocialMedias.FirstOrDefault(x => x.Id == id);
-
-            if (result != null)
+            if (result == null)
             {
-                db.Remove(result);
-                db.SaveChanges();
-                return Ok(result);
+                return new ServiceResponse("Bad Request --> Böyle bir kayıt bulunmuyor");
             }
-
-            return BadRequest();
+            result.IsDeleted = true;
+            db.SaveChanges();
+            return new ServiceResponse("Kayıt Silindi");
         }
     }
 }

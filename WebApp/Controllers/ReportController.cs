@@ -47,6 +47,6 @@ namespace WebApp.Controllers
             return (List<Category>)result;
         }
 
-        //Social Media GETLİST yapılacak DTO'Lu
+        
     }
 }

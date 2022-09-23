@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Entities.Concrete;
 using Entities.Dto.TagDtos;
+using Entities.Dto.UserDtos;
 
 namespace Entities.Mapping
 {
@@ -8,7 +9,7 @@ namespace Entities.Mapping
     {
         public UserProfile()
         {
-            CreateMap<TagAddOrUpdateRequestDto, User>();
+            CreateMap<ProfileAdminReqDto, User>();
         }
     }
 }

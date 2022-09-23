@@ -9,11 +9,11 @@ namespace Entities.Concrete
     {
         public int Id { get; set; }
         public string Title { get; set; }  
-        public string Contents { get; set; }
+        public string Content { get; set; }
         public DateTime PublishDate { get; set; }
         public int ViewNumber { get; set; }
         public int LikeNumber { get; set; }
-        public string HeaderImage { get; set; }
+        public string HeaderImagePath { get; set; }
 
         //Relations
         public List<ArticleCategory> ArticleCategories { get; set; }

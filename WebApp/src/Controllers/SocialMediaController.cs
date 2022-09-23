@@ -3,18 +3,16 @@ using Entities.Concrete;
 using Entities.Dto.SocialMediaDtos;
 using Entities.ObjectDesign;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace WebApp.Controllers
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class SocialMediaController : ControllerBase
+ 
+    public class SocialMediaController : ApiBaseController
     {
 
         private readonly IValidator<SocialMedia> _validator;
@@ -30,7 +28,7 @@ namespace WebApp.Controllers
         }
 
 
-        [HttpGet("getList")]
+        [HttpGet("getList"), AllowAnonymous]
         public ServiceResponse<IList<SocialMediaListResponseDto>> GetList()
         {
             BlogContext db = new BlogContext();

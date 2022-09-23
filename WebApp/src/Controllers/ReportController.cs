@@ -1,19 +1,16 @@
 ﻿using Entities.Concrete;
 using Entities.Dto.ArchiveDtos;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace WebApp.Controllers
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class ReportController : ControllerBase
+    public class ReportController : ApiBaseController
     {
-        [HttpGet("lastAddedArticle")]
+        [HttpGet("lastAddedArticle"), AllowAnonymous]
         public List<Article> GetLastAddedArticle()
         {
             BlogContext db = new BlogContext();

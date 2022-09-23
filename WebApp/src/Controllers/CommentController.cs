@@ -1,18 +1,15 @@
 ﻿using Entities.Concrete;
 using Entities.Dto.CommentDtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebApp.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class CommentController : Controller
+    public class CommentController : ApiBaseController
     {
-        [HttpGet("getList")]
+        [HttpGet("getList"), AllowAnonymous]
         public List<CommentListResponseDto> GetList()
         {
             BlogContext db = new BlogContext();
@@ -31,7 +28,7 @@ namespace WebApp.Controllers
             return result;
         }
 
-        [HttpPost("AddComment")]
+        [HttpPost("AddComment"), AllowAnonymous]
         public IActionResult Add(CommentAddOrUpdateRequestDto request)
         {
             BlogContext db = new BlogContext();

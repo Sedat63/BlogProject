@@ -1,18 +1,15 @@
 ﻿using Entities.Concrete;
 using Entities.Dto.ArticleDtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebApp.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class ArticleController : ControllerBase
+    public class ArticleController : ApiBaseController
     {
-        [HttpGet("getList")]
+        [HttpGet("getList"), AllowAnonymous]
         public List<ArticleListResponseDto> GetList()
         {
             BlogContext db = new BlogContext();
@@ -20,7 +17,7 @@ namespace WebApp.Controllers
             {
                 Id = x.Id,
                 Title = x.Title,
-                Contents = x.Contents,
+                Contents = x.Content,
                 PublishDate = x.PublishDate,
                 ViewNumber = x.ViewNumber,
                 LikeNumber = x.LikeNumber
@@ -38,7 +35,7 @@ namespace WebApp.Controllers
             {
                 Id = request.Id,
                 Title = request.Title,
-                Contents = request.Contents,
+                Content = request.Contents,
                 PublishDate = request.PublishDate,
                 ViewNumber = request.ViewNumber,
                 LikeNumber = request.LikeNumber
@@ -57,7 +54,7 @@ namespace WebApp.Controllers
             if (result != null)
             {
                 result.Title = request.Title;
-                result.Contents = request.Contents;
+                result.Content = request.Contents;
                 result.PublishDate = request.PublishDate;
                 result.ViewNumber = request.ViewNumber;
                 result.LikeNumber = request.LikeNumber;

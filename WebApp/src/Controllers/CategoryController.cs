@@ -1,53 +1,59 @@
 ﻿using Entities.Concrete;
 using Entities.Dto.CategoryDtos;
+using Entities.ObjectDesign;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebApp.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class CategoryController : ControllerBase
+    public class CategoryController : ApiBaseController
     {
-        [HttpGet("getList")]
-        public List<CategoryListResponseDto> GetList()
+        [HttpGet("getList"), AllowAnonymous]
+        public ServiceResponse<List<CategoryListResponseDto>> GetList()
         {
-            BlogContext db = new BlogContext();
-            var result = db.Categories.Select(x => new CategoryListResponseDto
+          using BlogContext db = new BlogContext();
+
+            var result = db.Categories
+                .Include(x => x.ArticleCategories)
+                .ThenInclude(x => x.Article)
+                .Select(x => new CategoryListResponseDto
             {
                 Id = x.Id,
                 CategoryName = x.CategoryName,
-                Description=x.Description
-
+                Description=x.Description,
+                ArticleCount = x.ArticleCategories.Count()
             }).ToList();
 
-            return result;
+            return new ServiceResponse<List<CategoryListResponseDto>>(result);
+
         }
 
         [HttpPost("addCategory")]
         public IActionResult Add(CategoryAddOrUpdateRequestDto request)
         {
-            BlogContext db = new BlogContext();
-
-            var category = new Category()
+            using (BlogContext db = new BlogContext())
             {
-                Id = request.Id,
-                Description = request.Description,
-                CategoryName = request.CategoryName
-            };
+                var category = new Category()
+                {
+                    Id = request.Id,
+                    Description = request.Description,
+                    CategoryName = request.CategoryName
+                };
 
-            db.Categories.Add(category);
-            db.SaveChanges();
+                db.Categories.Add(category);
+                db.SaveChanges();
+            }
+               
             return Ok("Kategori Eklendi");
         }
 
         [HttpPost("updateCategory")]
         public IActionResult Update(CategoryAddOrUpdateRequestDto request)
         {
-            BlogContext db = new BlogContext();
+            using BlogContext db = new BlogContext();
 
             var result = db.Categories.FirstOrDefault(x => x.Id == request.Id);
             if (result != null)
@@ -66,7 +72,7 @@ namespace WebApp.Controllers
         [HttpDelete("deleteCategory")]
         public IActionResult Delete(int id)
         {
-            BlogContext db = new BlogContext();
+            using BlogContext db = new BlogContext();
 
             var result = db.Categories.FirstOrDefault(x => x.Id == id);
 

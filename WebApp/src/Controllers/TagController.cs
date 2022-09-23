@@ -1,20 +1,17 @@
 ﻿using AutoMapper;
 using Entities.Concrete;
 using Entities.Dto.TagDtos;
-using Entities.Enums;
 using Entities.ObjectDesign;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebApp.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class TagController : ControllerBase
+
+    public class TagController : ApiBaseController
     {
         private readonly IValidator<Tag> _validator;
         private readonly IMapper _mapper;
@@ -30,7 +27,7 @@ namespace WebApp.Controllers
 
 
 
-        [HttpGet("getList")]
+        [HttpGet("getList"),AllowAnonymous]
         public ServiceResponse<IList<TagListResponseDto>> GetList()
         {
             var list = db.Tags

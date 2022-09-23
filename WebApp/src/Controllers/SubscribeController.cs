@@ -3,18 +3,14 @@ using Entities.Concrete;
 using Entities.Dto.SubscribeDtos;
 using Entities.ObjectDesign;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebApp.Controllers
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class SubscribeController : ControllerBase
+    public class SubscribeController : ApiBaseController
     {
 
         private readonly IMapper _mapper;
@@ -27,7 +23,7 @@ namespace WebApp.Controllers
             _validator = validator;
         }
 
-        [HttpGet("getList")]
+        [HttpGet("getList"), AllowAnonymous]
         public ServiceResponse<List<SubscribeListResponseDto>> GetList()
         {
             BlogContext db = new BlogContext();
@@ -44,7 +40,7 @@ namespace WebApp.Controllers
             return new ServiceResponse<List<SubscribeListResponseDto>>(result);
         }
 
-        [HttpPost("addSubscibe")]
+        [HttpPost("addSubscibe"), AllowAnonymous]
         public ServiceResponse AddSubscribe(SubscribeAddOrUpdateRequestDto request)
         {
 

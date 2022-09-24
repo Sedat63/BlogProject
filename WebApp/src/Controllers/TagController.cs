@@ -15,7 +15,6 @@ namespace WebApp.Controllers
     {
         private readonly IValidator<Tag> _validator;
         private readonly IMapper _mapper;
-        BlogContext db = new BlogContext();
 
         public TagController(
             IValidator<Tag> validator,
@@ -30,6 +29,8 @@ namespace WebApp.Controllers
         [HttpGet("getList"),AllowAnonymous]
         public ServiceResponse<IList<TagListResponseDto>> GetList()
         {
+           using BlogContext db = new BlogContext();
+
             var list = db.Tags
                 .Where(x => !x.IsDeleted)
                 .Select(x => new TagListResponseDto
@@ -54,6 +55,8 @@ namespace WebApp.Controllers
             {
                 return new ServiceResponse(string.Join(",", validationResult.Errors),false);
             }
+            using BlogContext db = new BlogContext();
+
             // Service
             tag.TagName = tag.TagName.Trim();
             //DB
@@ -75,6 +78,8 @@ namespace WebApp.Controllers
                 return new ServiceResponse(string.Join(",", validationResult.Errors), false);
             }
 
+            using BlogContext db = new BlogContext();
+
             var result = db.Tags.FirstOrDefault(x => x.Id == request.Id);
 
             if (result == null)
@@ -89,6 +94,8 @@ namespace WebApp.Controllers
         [HttpDelete("deleteTag/{id}")]
         public ServiceResponse Delete(int id)
         {
+            using BlogContext db = new BlogContext();
+
             var result = db.Tags.FirstOrDefault(x => x.Id == id);
 
             if (result == null)

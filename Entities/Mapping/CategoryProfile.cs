@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Entities.Concrete;
-using Entities.Dto.SocialMediaDtos;
+using Entities.Dto.CategoryDtos;
 
 
 namespace Entities.Mapping
@@ -9,7 +9,7 @@ namespace Entities.Mapping
     {
         public CategoryProfile()
         {
-            CreateMap<SocialMediaAddOrUpdateRequestDto, Category>();
+            CreateMap<CategoryAddOrUpdateRequestDto, Category>();
         }
     }
 }

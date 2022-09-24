@@ -1,6 +1,8 @@
-﻿using Entities.Concrete;
+﻿using AutoMapper;
+using Entities.Concrete;
 using Entities.Dto.CategoryDtos;
 using Entities.ObjectDesign;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +13,17 @@ namespace WebApp.Controllers
 {
     public class CategoryController : ApiBaseController
     {
+        private readonly IValidator<Category> _validator;
+        private readonly IMapper _mapper;
+
+        public CategoryController(
+            IValidator<Category> validator,
+            IMapper mapper)
+        {
+            _validator = validator;
+            _mapper = mapper;
+        }
+
         [HttpGet("getList"), AllowAnonymous]
         public ServiceResponse<List<CategoryListResponseDto>> GetList()
         {
@@ -31,59 +44,73 @@ namespace WebApp.Controllers
 
         }
 
-        [HttpPost("addCategory")]
-        public IActionResult Add(CategoryAddOrUpdateRequestDto request)
-        {
-            using (BlogContext db = new BlogContext())
-            {
-                var category = new Category()
-                {
-                    Id = request.Id,
-                    Description = request.Description,
-                    CategoryName = request.CategoryName
-                };
-
-                db.Categories.Add(category);
-                db.SaveChanges();
-            }
-               
-            return Ok("Kategori Eklendi");
-        }
-
-        [HttpPost("updateCategory")]
-        public IActionResult Update(CategoryAddOrUpdateRequestDto request)
+        [HttpPost("addCategory"),AllowAnonymous]
+        public ServiceResponse Add(CategoryAddOrUpdateRequestDto request)
         {
             using BlogContext db = new BlogContext();
 
-            var result = db.Categories.FirstOrDefault(x => x.Id == request.Id);
-            if (result != null)
+            var category = _mapper.Map<Category>(request);
+
+            var validationResult = _validator.Validate(category);
+
+            if (!validationResult.IsValid)
             {
-                result.CategoryName = request.CategoryName;
-                result.Description = request.Description;
-                db.SaveChanges();
-                return Ok(result);
+                return new ServiceResponse(string.Join(",", validationResult.Errors), false);
             }
-            else
-            {
-                return BadRequest();
-            }
+            // Service
+            category.CategoryName = category.CategoryName.Trim();
+            category.Description = category.Description.Trim();
+
+            //DB
+            db.Categories.Add(category);
+            db.SaveChanges();
+
+            return new ServiceResponse("Kategori Eklendi");
+
         }
 
-        [HttpDelete("deleteCategory")]
-        public IActionResult Delete(int id)
+        [HttpPost("updateCategory")]
+        public ServiceResponse Update(CategoryAddOrUpdateRequestDto request)
+        {
+            var category = _mapper.Map<Category>(request);
+
+            var validationResult = _validator.Validate(category);
+
+            if (!validationResult.IsValid)
+            {
+                return new ServiceResponse(string.Join(",", validationResult.Errors), false);
+            }
+
+            using BlogContext db = new BlogContext();
+
+            var result = db.Categories.FirstOrDefault(x => x.Id == request.Id);
+
+            if (result == null)
+            {
+                return new ServiceResponse("Bad Request --> Böyle bir kayıt bulunmuyor", false);
+            }
+            // Service
+            result.CategoryName = category.CategoryName.Trim();
+            result.Description = category.Description.Trim();
+
+            db.SaveChanges();
+            return new ServiceResponse("Kayıt Güncellendi");
+        }
+
+        [HttpDelete("deleteCategory/{id}")]
+        public ServiceResponse Delete(int id)
         {
             using BlogContext db = new BlogContext();
 
             var result = db.Categories.FirstOrDefault(x => x.Id == id);
 
-            if (result != null)
+            if (result == null)
             {
-                db.Remove(result);
-                db.SaveChanges();
-                return Ok(result);
+                return new ServiceResponse("Bad Request --> Böyle bir kayıt bulunmuyor");
             }
-
-            return BadRequest();
+            result.IsDeleted = true;
+            db.SaveChanges();
+            return new ServiceResponse("Kayıt Silindi");
         }
     }
 }

@@ -10,7 +10,15 @@ namespace Entities.Validations
     {
         public ArticleValidator()
         {
-            RuleFor(x => x.Title).NotEmpty().WithMessage("Etiket Boş olamaz");
+            RuleFor(x => x.Title).NotEmpty().WithMessage("Makale Başlığı zorunludur");
+            RuleFor(x => x.ArticleCategories).NotNull().WithMessage("Kategori Zorunludur");
+            RuleFor(x => x.ArticleTags).NotNull().WithMessage("Kategori Zorunludur");
+            RuleFor(x => x.ContentText).NotEmpty().WithMessage("Text İçerik zorunludur");
+            RuleFor(x => x.ContentHtml).NotEmpty().WithMessage("Html İçerik zorunludur");
+
+            //RuleFor(x => x.PublishDate).NotEmpty().WithMessage("İçerik zorunludur");
+
+
         }
     }
 }

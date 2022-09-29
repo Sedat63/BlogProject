@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using Entities.Concrete;
-using Entities.Dto.SocialMediaDtos;
-
+using Entities.Dto.ArticleDtos;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Entities.Mapping
 {
@@ -9,7 +10,11 @@ namespace Entities.Mapping
     {
         public ArticleProfile()
         {
-            CreateMap<SocialMediaAddOrUpdateRequestDto, Article>();
+            CreateMap<ArticleAddRequestDto, Article>()
+                .ForMember(dest => dest.ArticleCategories, x => x.MapFrom(y =>
+                y.CategoryIds.Select(id => new ArticleCategory { CategoryId = id })))
+                .ForMember(dest => dest.ArticleTags, x => x.MapFrom(y =>
+                         y.TagIds.Select(id => new ArticleTag { TagId = id })));
         }
     }
 }

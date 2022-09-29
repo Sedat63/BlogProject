@@ -14,7 +14,7 @@ namespace WebApp.Controllers
         {
             BlogContext db = new BlogContext();
 
-            var result = db.Comments.Select(x => new CommentListResponseDto
+            var result = db.Comment.Select(x => new CommentListResponseDto
             {
                 Id = x.Id,
                 Text = x.Text,
@@ -43,7 +43,7 @@ namespace WebApp.Controllers
                 LikeNumber = request.LikeNumber
             };
 
-            db.Comments.Add(comment);
+            db.Comment.Add(comment);
             db.SaveChanges();
             return Ok("Yorum Eklendi");
         }
@@ -53,7 +53,7 @@ namespace WebApp.Controllers
         {
             BlogContext db = new BlogContext();
 
-            var result = db.Comments.FirstOrDefault(x => x.Id == request.Id);
+            var result = db.Comment.FirstOrDefault(x => x.Id == request.Id);
             if (result != null)
             {
                 result.Text = request.Text;
@@ -76,7 +76,7 @@ namespace WebApp.Controllers
         {
             BlogContext db = new BlogContext();
 
-            var result = db.Comments.FirstOrDefault(x => x.Id == id);
+            var result = db.Comment.FirstOrDefault(x => x.Id == id);
 
             if (result != null)
             {

@@ -4,14 +4,16 @@ using Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(BlogContext))]
-    partial class BlogContextModelSnapshot : ModelSnapshot
+    [Migration("20220927104916_V9")]
+    partial class V9
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,10 +28,7 @@ namespace Entities.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("ContentHtml")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContentText")
+                    b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HeaderImagePath")
@@ -121,7 +120,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("ArticleTags");
+                    b.ToTable("ArticleTickets");
                 });
 
             modelBuilder.Entity("Entities.Concrete.Category", b =>
@@ -132,9 +131,6 @@ namespace Entities.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CategoryName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ColorHex")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -177,7 +173,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("ArticleId");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Entities.Concrete.Image", b =>

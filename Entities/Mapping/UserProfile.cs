@@ -9,7 +9,7 @@ namespace Entities.Mapping
     {
         public UserProfile()
         {
-            CreateMap<ProfileAdminReqDto, User>();
+            CreateMap<ProfileAdminRequestDto, User>();
         }
     }
 }

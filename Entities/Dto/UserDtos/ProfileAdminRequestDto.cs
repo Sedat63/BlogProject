@@ -2,7 +2,7 @@
 
 namespace Entities.Dto.UserDtos
 {
-    public class ProfileAdminReqDto
+    public class ProfileAdminRequestDto
     {
         public int Id { get; set; }
         public string Username { get; set; }

@@ -2,7 +2,7 @@
 
 namespace Entities.Dto.UserDtos
 {
-    public class ProfileImageAdminReqDto
+    public class ProfileImageAdminRequestDto
     {
         public int Id { get; set; }
         public IFormFile ImageFile { get; set; }

@@ -15,7 +15,6 @@ namespace WebApp.Controllers
     {
         private readonly IValidator<User> _validator;
         private readonly IMapper _mapper;
-        BlogContext db = new BlogContext();
 
         public UserController(
             IValidator<User> validator,
@@ -27,10 +26,12 @@ namespace WebApp.Controllers
 
 
         [HttpGet("get"), AllowAnonymous]
-        public ServiceResponse<UserAdminRspDto> Get()
+        public ServiceResponse<UserAdminResponseDto> Get()
         {
+          using BlogContext db = new BlogContext();
+
             var user = db.Users
-                .Select(x => new UserAdminRspDto
+                .Select(x => new UserAdminResponseDto
                 {
                     Description = x.Description,
                     FullName = x.FullName,
@@ -42,14 +43,15 @@ namespace WebApp.Controllers
                 }).FirstOrDefault();
 
             if (user == null)
-                return new ServiceResponse<UserAdminRspDto>("Kullanıcı Silinmiş", false);
+                return new ServiceResponse<UserAdminResponseDto>("Kullanıcı Silinmiş", false);
 
-            return new ServiceResponse<UserAdminRspDto>(user);
+            return new ServiceResponse<UserAdminResponseDto>(user);
         }
 
         [HttpPost("updateUser")]
-        public ServiceResponse Update(ProfileAdminReqDto request)
+        public ServiceResponse Update(ProfileAdminRequestDto request)
         {
+
             var user = _mapper.Map<User>(request);
 
             var validationResult = _validator.Validate(user);
@@ -58,6 +60,7 @@ namespace WebApp.Controllers
             {
                 return new ServiceResponse(string.Join(",", validationResult.Errors), false);
             }
+            using BlogContext db = new BlogContext();
 
             var dbUser = db.Users.FirstOrDefault();
 
@@ -79,30 +82,27 @@ namespace WebApp.Controllers
 
 
         [HttpPost("UpdateUserImage")]
-        public ServiceResponse UpdateProfile([FromForm]ProfileImageAdminReqDto request)
+        public ServiceResponse UpdateProfile([FromForm]ProfileImageAdminRequestDto request)
         {
-            #region add Image
-            string path = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot","images");
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
 
-            //create folder if not exist
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            //{
-            //    request.ImageFile.CopyTo(stream);
-            //}
-            #endregion
+            using var fileStream = new FileStream(Path.Combine(path, request.ImageFile.FileName), FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
 
-            #region its path save to db when it added the image
+            request.ImageFile.CopyTo(fileStream);
+
+            using BlogContext db = new BlogContext();
+
             var user = db.Users.FirstOrDefault();
 
             if (user == null)
                 return new ServiceResponse("Kullanıcı Silinmiş", false);
 
-            user.ImagePath = path;
+            user.ImagePath = $@"images\{request.ImageFile.FileName}"; ;
 
             db.SaveChanges();
-            #endregion
 
             return new ServiceResponse("Resim Başarıyla Güncellendi");
         }

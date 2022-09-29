@@ -1,22 +1,21 @@
-﻿using Entities.Concrete;
-using Entities.Dto.CategoryDtos;
-using Entities.Dto.TagDtos;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Entities.Dto.ArticleDtos
 {
-    public class ArticleListResponseDto
+    public class ArticleUpdateRequestDto
     {
         public int Id { get; set; }
         public string Title { get; set; }
         public string ContentText { get; set; }
-        public string HeaderImagePath { get; set; }
-        public bool IsBanner { get; set; }
+        public string ContentHtml { get; set; }
         public DateTime PublishDate { get; set; }
-        public IEnumerable<TagListResponseDto> Tags { get; set; }
-        public IEnumerable<CategoryAdminResponseForArticleList> Categories { get; set; }
+        public IFormFile BannerImage { get; set; }
+        public int[] TagIds { get; set; }
+        public int[] CategoryIds { get; set; }
+        public bool IsBannerArticle { get; set; }
         public int ViewNumber { get; set; }
         public int LikeNumber { get; set; }
     }

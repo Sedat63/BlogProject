@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Entities.Dto.UserDtos
 {
-    internal class UserAdminRsp
+    internal class UserAdminResponse
     {
     }
 }

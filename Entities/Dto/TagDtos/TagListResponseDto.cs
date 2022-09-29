@@ -8,6 +8,5 @@ namespace Entities.Dto.TagDtos
     {
         public int Id { get; set; }
         public string TagName { get; set; }
-        public int MyProperty { get; set; }
     }
 }

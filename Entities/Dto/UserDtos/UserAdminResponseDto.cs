@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Entities.Dto.UserDtos
 {
-    public class UserAdminRspDto
+    public class UserAdminResponseDto
     {
         public int Id { get; set; }
         public string Username { get; set; }

@@ -41,7 +41,8 @@ namespace WebApp
                      policy => policy.RequireRole("Admin"));
                 
             });
-
+            services.AddControllersWithViews().AddNewtonsoftJson(options =>options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
             #region JWT TOKEN CONFIG
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 

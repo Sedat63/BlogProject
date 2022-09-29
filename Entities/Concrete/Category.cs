@@ -10,6 +10,7 @@ namespace Entities.Concrete
         public int Id { get; set; }
         public string CategoryName { get; set; }
         public string Description { get; set; }
+        public string ColorHex { get; set; }
 
         //Relations
         public List<ArticleCategory> ArticleCategories { get; set; }
